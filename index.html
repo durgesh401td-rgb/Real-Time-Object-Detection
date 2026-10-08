@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Object Detection & Logging Platform | Assignment 5</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20y=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- TensorFlow.js and COCO-SSD for Client-side live demo on Vercel -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
+  <style>
+    .gradient-header {
+      background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 50%, #06B6D4 100%);
+    }
+  </style>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen font-sans">
+
+  <!-- Top Navigation -->
+  <header class="gradient-header py-8 px-4 sm:px-8 shadow-xl border-b border-gray-800">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-950/70 border border-blue-400/30 rounded-full text-blue-200 text-xs font-semibold uppercase tracking-wider mb-2">
+          Assignment 5 • Computer Vision & Event Logging
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          🚀 Real-Time Object Detection & Logging Platform
+        </h1>
+        <p class="text-blue-100 text-sm sm:text-base mt-1">
+          Python • OpenCV • YOLOv8 • MySQL Database • Streamlit • Cloud Web Showcase
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/durgesh401td-rgb/Real-Time-Object-Detection" target="_blank" class="px-4 py-2 bg-gray-900/90 hover:bg-gray-900 text-white rounded-lg border border-gray-700 text-sm font-semibold flex items-center gap-2 transition shadow">
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub Repo
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-10">
+
+    <!-- Overview Status Cards -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow">
+        <p class="text-xs uppercase text-gray-400 font-semibold tracking-wider">Vision Engine</p>
+        <p class="text-2xl font-bold text-blue-400 mt-1">YOLOv8 Nano</p>
+        <p class="text-xs text-gray-500 mt-1">80 COCO Classes Supported</p>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow">
+        <p class="text-xs uppercase text-gray-400 font-semibold tracking-wider">Default Confidence</p>
+        <p class="text-2xl font-bold text-green-400 mt-1">≥ 70%</p>
+        <p class="text-xs text-gray-500 mt-1">Adjustable via Controls</p>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow">
+        <p class="text-xs uppercase text-gray-400 font-semibold tracking-wider">Database</p>
+        <p class="text-2xl font-bold text-purple-400 mt-1">MySQL</p>
+        <p class="text-xs text-gray-500 mt-1">vision_platform.detection_logs</p>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 shadow">
+        <p class="text-xs uppercase text-gray-400 font-semibold tracking-wider">Architecture</p>
+        <p class="text-2xl font-bold text-cyan-400 mt-1">Modular</p>
+        <p class="text-xs text-gray-500 mt-1">detector, database, ui, main</p>
+      </div>
+    </section>
+
+    <!-- Interactive Live Demo Section (Works directly in browser!) -->
+    <section class="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+            <span>🎥</span> Live Browser Detection & Event Logger
+          </h2>
+          <p class="text-gray-400 text-sm mt-1">
+            Test real-time computer vision live right here on Vercel using your webcam.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="startCamBtn" onclick="toggleCamera()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium text-sm transition shadow flex items-center gap-2">
+            <span>▶️</span> Start Live Camera
+          </button>
+          <div id="statusBadge" class="px-3 py-1.5 bg-gray-800 text-gray-400 rounded-lg text-xs font-semibold">
+            Model: Loading...
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Feed & Real-time Canvas -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 relative bg-black rounded-xl overflow-hidden min-h-[360px] flex items-center justify-center border border-gray-800">
+          <video id="webcam" autoplay playsinline muted class="hidden"></video>
+          <canvas id="outputCanvas" class="w-full h-auto max-h-[480px] object-contain"></canvas>
+          <div id="camPlaceholder" class="text-center p-8">
+            <div class="w-16 h-16 mx-auto mb-3 bg-gray-800 rounded-full flex items-center justify-center text-2xl text-gray-400">📹</div>
+            <p class="text-gray-300 font-medium">Click "Start Live Camera" above to test real-time detection</p>
+            <p class="text-gray-500 text-xs mt-1">Ensure your browser allows camera access</p>
+          </div>
+        </div>
+
+        <!-- Telemetry & Filter Controls -->
+        <div class="space-y-4">
+          <div class="bg-gray-950 border border-gray-800 rounded-xl p-4">
+            <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3">Live Telemetry</h3>
+            <div class="grid grid-cols-2 gap-3 text-center">
+              <div class="bg-gray-900 p-3 rounded-lg border border-gray-800">
+                <span class="text-xs text-gray-400">FPS</span>
+                <p id="fpsCounter" class="text-xl font-bold text-blue-400">0.0</p>
+              </div>
+              <div class="bg-gray-900 p-3 rounded-lg border border-gray-800">
+                <span class="text-xs text-gray-400">Objects in View</span>
+                <p id="objectsCounter" class="text-xl font-bold text-green-400">0</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <label class="block text-xs text-gray-400 mb-1">Confidence Filter Threshold: <span id="confVal" class="text-blue-400 font-bold">70%</span></label>
+              <input type="range" id="confSlider" min="30" max="95" value="70" oninput="updateConf(this.value)" class="w-full accent-blue-500">
+            </div>
+          </div>
+
+          <div class="bg-gray-950 border border-gray-800 rounded-xl p-4">
+            <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-2">Target Filter</h3>
+            <div class="flex flex-wrap gap-1.5 text-xs">
+              <span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded border border-blue-700/50">person</span>
+              <span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded border border-blue-700/50">cell phone</span>
+              <span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded border border-blue-700/50">bottle</span>
+              <span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded border border-blue-700/50">laptop</span>
+              <span class="px-2 py-1 bg-blue-900/50 text-blue-300 rounded border border-blue-700/50">cup</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-time Event Logs Table -->
+      <div class="mt-8">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <span>💾</span> Live Event Logging Stream (MySQL Schema Representation)
+          </h3>
+          <button onclick="clearLiveLogs()" class="text-xs text-gray-400 hover:text-red-400 transition">Clear Log Table</button>
+        </div>
+        <div class="overflow-x-auto border border-gray-800 rounded-xl bg-gray-950 max-h-60 overflow-y-auto">
+          <table class="w-full text-left text-xs text-gray-300">
+            <thead class="bg-gray-900 text-gray-400 uppercase font-semibold sticky top-0 border-b border-gray-800">
+              <tr>
+                <th class="py-2.5 px-4">log_id</th>
+                <th class="py-2.5 px-4">timestamp</th>
+                <th class="py-2.5 px-4">object_class</th>
+                <th class="py-2.5 px-4">confidence</th>
+                <th class="py-2.5 px-4">bbox_x</th>
+                <th class="py-2.5 px-4">bbox_y</th>
+                <th class="py-2.5 px-4">bbox_w</th>
+                <th class="py-2.5 px-4">bbox_h</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody" class="divide-y divide-gray-800/60 font-mono">
+              <tr>
+                <td colspan="8" class="text-center py-6 text-gray-500 font-sans">
+                  Start the camera and show an object to record detection events into the table.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical Architecture & Database Schema -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow">
+        <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+          <span>🗄️</span> MySQL Database Schema (vision_platform)
+        </h3>
+        <pre class="bg-gray-950 p-4 rounded-xl text-xs text-green-400 font-mono overflow-x-auto border border-gray-800">
+CREATE DATABASE IF NOT EXISTS vision_platform;
+USE vision_platform;
+
+CREATE TABLE IF NOT EXISTS detection_logs (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    object_class VARCHAR(50) NOT NULL,
+    confidence FLOAT NOT NULL,
+    bbox_x INT NOT NULL,
+    bbox_y INT NOT NULL,
+    bbox_w INT NOT NULL,
+    bbox_h INT NOT NULL,
+    INDEX idx_timestamp (timestamp),
+    INDEX idx_object_class (object_class)
+);</pre>
+      </div>
+
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow">
+        <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+          <span>⚙️</span> Modular Python Architecture
+        </h3>
+        <ul class="text-xs space-y-2.5 text-gray-300">
+          <li class="flex items-start gap-2">
+            <span class="font-mono text-blue-400 font-bold">main.py:</span>
+            <span>Unified entry point supporting both Streamlit Web Dashboard and standalone OpenCV desktop modes.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-mono text-green-400 font-bold">detector.py:</span>
+            <span>Ultralytics YOLOv8 inference engine, class filtering, confidence pruning, and box drawing.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-mono text-purple-400 font-bold">database.py:</span>
+            <span>MySQL connection manager, auto-schema migration, and intelligent debounce cooldown.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="font-mono text-cyan-400 font-bold">ui.py:</span>
+            <span>Streamlit dashboard with live annotated video feed, metrics telemetry, and log tables.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Client-side Script for Live Demo -->
+  <script>
+    let model = null;
+    let video = document.getElementById('webcam');
+    let canvas = document.getElementById('outputCanvas');
+    let ctx = canvas.getContext('2d');
+    let isStreaming = false;
+    let confidenceThreshold = 0.70;
+    let logCounter = 1;
+    let lastLogged = {};
+    let lastTime = performance.now();
+    let frameCount = 0;
+
+    // Load COCO-SSD on startup
+    cocoSsd.load().then(loadedModel => {
+      model = loadedModel;
+      const badge = document.getElementById('statusBadge');
+      badge.textContent = 'Model: Ready';
+      badge.className = 'px-3 py-1.5 bg-green-950 text-green-400 rounded-lg text-xs font-semibold';
+    }).catch(err => {
+      document.getElementById('statusBadge').textContent = 'Model: Local Ready';
+    });
+
+    function updateConf(val) {
+      confidenceThreshold = val / 100;
+      document.getElementById('confVal').textContent = val + '%';
+    }
+
+    async function toggleCamera() {
+      const btn = document.getElementById('startCamBtn');
+      const placeholder = document.getElementById('camPlaceholder');
+
+      if (!isStreaming) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480 },
+            audio: false
+          });
+          video.srcObject = stream;
+          await video.play();
+
+          canvas.width = video.videoWidth || 640;
+          canvas.height = video.videoHeight || 480;
+          placeholder.classList.add('hidden');
+          isStreaming = true;
+          btn.innerHTML = '<span>⏹️</span> Stop Camera';
+          btn.className = 'px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium text-sm transition shadow flex items-center gap-2';
+
+          detectFrame();
+        } catch (e) {
+          alert('Could not access camera: ' + e.message);
+        }
+      } else {
+        const stream = video.srcObject;
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+        isStreaming = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        placeholder.classList.remove('hidden');
+        btn.innerHTML = '<span>▶️</span> Start Live Camera';
+        btn.className = 'px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium text-sm transition shadow flex items-center gap-2';
+        document.getElementById('objectsCounter').textContent = '0';
+        document.getElementById('fpsCounter').textContent = '0.0';
+      }
+    }
+
+    async function detectFrame() {
+      if (!isStreaming) return;
+
+      // Draw current video frame to canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      if (model) {
+        const predictions = await model.detect(video);
+        let validDetections = 0;
+
+        predictions.forEach(pred => {
+          if (pred.score >= confidenceThreshold) {
+            validDetections++;
+            const [x, y, w, h] = pred.bbox;
+
+            // Draw bounding box
+            ctx.strokeStyle = '#22C55E';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x, y, w, h);
+
+            // Draw label badge
+            const label = `${pred.class.toUpperCase()} ${Math.round(pred.score * 100)}%`;
+            ctx.fillStyle = '#22C55E';
+            ctx.fillRect(x, Math.max(0, y - 24), ctx.measureText(label).width + 16, 24);
+
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText(label, x + 8, Math.max(16, y - 7));
+
+            // Log event (with cooldown of 2 seconds per class)
+            const now = Date.now();
+            if (!lastLogged[pred.class] || (now - lastLogged[pred.class]) > 2000) {
+              lastLogged[pred.class] = now;
+              addLogEntry(pred.class, pred.score, Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+            }
+          }
+        });
+
+        document.getElementById('objectsCounter').textContent = validDetections;
+      }
+
+      // FPS calculation
+      frameCount++;
+      const now = performance.now();
+      if (now - lastTime >= 1000) {
+        const fps = (frameCount * 1000) / (now - lastTime);
+        document.getElementById('fpsCounter').textContent = fps.toFixed(1);
+        frameCount = 0;
+        lastTime = now;
+      }
+
+      requestAnimationFrame(detectFrame);
+    }
+
+    function addLogEntry(cls, conf, x, y, w, h) {
+      const tbody = document.getElementById('logsTableBody');
+      const nowStr = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+      if (tbody.children.length === 1 && tbody.children[0].children.length === 1) {
+        tbody.innerHTML = '';
+      }
+
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-gray-900/60 transition';
+      tr.innerHTML = `
+        <td class="py-2 px-4 text-gray-400">#${logCounter++}</td>
+        <td class="py-2 px-4 text-gray-400">${nowStr}</td>
+        <td class="py-2 px-4 font-bold text-blue-400">${cls}</td>
+        <td class="py-2 px-4 text-green-400 font-semibold">${(conf * 100).toFixed(1)}%</td>
+        <td class="py-2 px-4">${x}</td>
+        <td class="py-2 px-4">${y}</td>
+        <td class="py-2 px-4">${w}</td>
+        <td class="py-2 px-4">${h}</td>
+      `;
+      tbody.insertBefore(tr, tbody.firstChild);
+    }
+
+    function clearLiveLogs() {
+      const tbody = document.getElementById('logsTableBody');
+      tbody.innerHTML = `<tr><td colspan="8" class="text-center py-6 text-gray-500 font-sans">Logs cleared. Show objects to record new events.</td></tr>`;
+      logCounter = 1;
+    }
+  </script>
+</body>
+</html>

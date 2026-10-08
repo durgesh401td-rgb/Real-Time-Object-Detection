@@ -206,5 +206,13 @@ def main():
         )
 
 
+# Serverless WSGI / Vercel compatibility handler
+def handler(request=None, *args, **kwargs):
+    return {"statusCode": 200, "headers": {"Content-Type": "text/plain"}, "body": "Vision Platform Running"}
+
+app = handler
+application = handler
+
+
 if __name__ == "__main__":
     main()
