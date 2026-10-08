@@ -34,3 +34,7 @@ $RECYCLE.BIN/
 # Temporary and log files
 *.log
 *.tmp
+*.mp4
+*.avi
+*.mov
+*.mkv
