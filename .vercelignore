@@ -1,11 +1,7 @@
-# Files to ignore on Vercel deployment
-# This ensures Vercel serves the web showcase without attempting
-# to run Python serverless functions with 250MB size limits.
-main.py
-detector.py
-database.py
-ui.py
 requirements.txt
+database.py
+detector.py
+ui.py
 database_schema.sql
 *.pt
 .env
