@@ -10,10 +10,7 @@ import os
 import time
 import argparse
 import subprocess
-import cv2
-
-from detector import YOLODetector, COCO_CLASSES
-from database import DatabaseManager
+from http.server import BaseHTTPRequestHandler
 
 
 def run_opencv_mode(
@@ -24,6 +21,9 @@ def run_opencv_mode(
     cooldown: float = 2.0,
 ):
     """Runs direct OpenCV desktop window with YOLO detection and MySQL logging."""
+    import cv2
+    from detector import YOLODetector, COCO_CLASSES
+    from database import DatabaseManager
     print("=" * 60)
     print("🚀 Starting Real-Time Object Detection Platform (OpenCV Mode)")
     print("=" * 60)
@@ -206,9 +206,19 @@ def main():
         )
 
 
-# Serverless WSGI / Vercel compatibility handler
-def handler(request=None, *args, **kwargs):
-    return {"statusCode": 200, "headers": {"Content-Type": "text/plain"}, "body": "Vision Platform Running"}
+# Serverless Vercel compatibility handler
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html; charset=utf-8")
+        self.end_headers()
+        html_file = os.path.join(os.path.dirname(__file__), "index.html")
+        if os.path.exists(html_file):
+            with open(html_file, "r", encoding="utf-8") as f:
+                self.wfile.write(f.read().encode("utf-8"))
+        else:
+            self.wfile.write(b"<h1>Vision Platform Running</h1>")
+        return
 
 app = handler
 application = handler
